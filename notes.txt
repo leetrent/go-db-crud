@@ -1,0 +1,4 @@
+# Create go.mod file:
+$ go mod init github.com/leetrent/go-db-crud
+
+$ go get github.com/jackc/pgx/v4
