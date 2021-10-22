@@ -11,7 +11,7 @@ import (
 func main() {
 
 	// connect to database
-	conn, err := sql.Open("pgx", "host=localhost port=5432 dbname=test_connect user=postgres password=Ca$eyPo0h")
+	conn, err := sql.Open("", "")
 	if err != nil {
 		log.Fatal(fmt.Sprintf("Unable to connect to database: %v\n", err))
 	}
