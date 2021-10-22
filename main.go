@@ -11,7 +11,7 @@ import (
 func main() {
 
 	// connect to database
-	conn, err := sql.Open("pgx", "")
+	conn, err := sql.Open("", "")
 	if err != nil {
 		log.Fatal(fmt.Sprintf("Unable to connect to database: %v\n", err))
 	}
@@ -26,6 +26,21 @@ func main() {
 	log.Println("Pinged database...")
 
 	// retrieve all rows from users table
+	err = getAllRows(conn)
+	if err != nil {
+		log.Fatal(fmt.Sprintf("Error retrieving rows from user table: %v\n", err))
+	}
+
+	// insert a row into the users table
+	query := `insert into users (first_name, last_name) values ($1, $2)`
+	_, err = conn.Exec(query, "Paul", "Hanover")
+	if err != nil {
+		log.Fatal(fmt.Sprintf("Error inserting rows into user table: %v\n", err))
+	}
+
+	log.Println("Row inserted into users table...")
+
+	// retrieve all rows from users table to test insert
 	err = getAllRows(conn)
 	if err != nil {
 		log.Fatal(fmt.Sprintf("Error retrieving rows from user table: %v\n", err))
