@@ -11,7 +11,7 @@ import (
 func main() {
 
 	// connect to database
-	conn, err := sql.Open("", "")
+	conn, err := sql.Open("pgx", "host=localhost port=5432 dbname=test_connect user=postgres password=Ca$eyPo0h")
 	if err != nil {
 		log.Fatal(fmt.Sprintf("Unable to connect to database: %v\n", err))
 	}
@@ -44,6 +44,49 @@ func main() {
 	err = getAllRows(conn)
 	if err != nil {
 		log.Fatal(fmt.Sprintf("Error retrieving rows from user table: %v\n", err))
+	}
+
+	// update a row in users table
+	updateStmt := `update users set first_name = $1 where first_name = $2`
+	_, err = conn.Exec(updateStmt, "Mary Ellen", "Mary")
+	if err != nil {
+		log.Fatal(fmt.Sprintf("Error updating row in user table: %v\n", err))
+	}
+
+	log.Println("Update row  uin sers table...")
+
+	// retrieve all rows from users table to test update
+	err = getAllRows(conn)
+	if err != nil {
+		log.Fatal(fmt.Sprintf("Error retrieving rows from user table: %v\n", err))
+	}
+
+	// get one row by id
+	selectOneRowQuery := `select id, first_name, last_name from users where id = $1`
+
+	var firstName, lastName string
+	var id int
+
+	row := conn.QueryRow(selectOneRowQuery, 1)
+	err = row.Scan(&id, &firstName, &lastName)
+	if err != nil {
+		log.Fatal(err)
+	}
+	log.Println("QueryRow returns", id, firstName, lastName)
+
+	// delete a row
+	deleteStmt := `delete from users where id = $1`
+	_, err = conn.Exec(deleteStmt, 1)
+	if err != nil {
+		log.Fatal(err)
+	}
+
+	log.Println("Deleted a row!")
+
+	// get rows from table again
+	err = getAllRows(conn)
+	if err != nil {
+		log.Fatal(err)
 	}
 }
 
